@@ -1,0 +1,6 @@
+#!/bin/env bash
+#
+# script to close password-less sudo access by modifying /etc/sudoers
+#
+
+sudo --preserve-env=USER bash -c 'sed -i "/^$USER/d" /etc/sudoers'

@@ -1,0 +1,14 @@
+#!/bin/env bash
+#
+# script to open up password-less sudo access by modifying /etc/sudoers
+#
+
+sudo --preserve-env=USER grep -e "^$USER" /etc/sudoers 2>&1 > /dev/null
+
+if [ $? = 0 ]; then
+    echo "entry previously saved to /etc/sudoers"
+    echo "remember to close_sudo access."
+else
+    sudo --preserve-env=USER bash -c 'echo "$USER ALL=(ALL:ALL) NOPASSWD:ALL" >> /etc/sudoers'
+    echo "Remeber to close_sudo as soon as possible."
+fi
