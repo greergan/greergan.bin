@@ -1,7 +1,6 @@
 #!/bin/env bash
 BASE_URI="https://raw.githubusercontent.com/greergan/bin/main/src"
 
-
 wget_exists () {
     status=`which wget`
     return $?
