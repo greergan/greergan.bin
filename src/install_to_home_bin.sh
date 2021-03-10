@@ -1,5 +1,5 @@
 #!/bin/env bash
-BASE_URI="https://github.com/greergan/bin/tree/main/src"
+BASE_URI="https://github.com/greergan/bin/main/src"
 
 wget_exists () {
     status=`which wget`
