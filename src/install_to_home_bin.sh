@@ -25,3 +25,4 @@ else
     download_script
 fi
 
+echo "Remember to 'source ~/.profile' to use your scripts immediately, otherwise logout and log back in."
