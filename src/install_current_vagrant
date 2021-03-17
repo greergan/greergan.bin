@@ -27,7 +27,6 @@ source ${HOME}/.profile
 EXE=`vagrant --version`
 if [ ! "$EXE" = "" ]; then
     echo "$EXE is now installed"
-    echo "Either logout and log back in or do=> source ~/.profile to be able to run vagrant for your ${HOME}/bin directory."
     exit 0
 fi
 
