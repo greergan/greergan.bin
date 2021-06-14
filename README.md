@@ -9,12 +9,14 @@ curl -s https://raw.githubusercontent.com/greergan/bin/main/src/install_to_home_
 ```
 
 ## open_sudo
+### useful for allowing root level access for scripted software installations
 modifies /etc/sudoers by appending a NOPASSWD entry for the logged in user
 ```
 wget https://raw.githubusercontent.com/greergan/bin/main/src/open_sudo -O ${HOME}/bin/open_sudo
 ```
 
 ## close_sudo
+### useful for removing root level access
 modifies /etc/sudoers by removing the  NOPASSWD entry for the logged in user
 ```
 wget https://raw.githubusercontent.com/greergan/bin/main/src/close_sudo -O ${HOME}/bin/close_sudo
