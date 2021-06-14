@@ -7,7 +7,7 @@ wget_exists () {
 }
 
 download_script () {
-    for script in open_sudo close_sudo install_current_vagrant
+    for script in open_sudo close_sudo install_current_vagrant gitclean
     do
         wget -q $BASE_URI/$script -O ${HOME}/bin/$script
         chmod u+x ${HOME}/bin/$script
