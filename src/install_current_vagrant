@@ -1,32 +1,50 @@
 #!/usr/bin/env bash
-OS=`head -1 /etc/os-release | tr -d \"  | cut -d'=' -f2`
+source ~/bin/lib/os_information.bash
+source ~/bin/lib/colors.bash
+OS=`get_os_name`
 
-echo "Install Vagrant for Linux from zip file."
+magenta
+echo -e '\033[2J\033[u'
+echo -e '\033[38;2;200;100;2552m'
+echo "Installing Vagrant for Linux from zip file."
 echo "This script will install into ${HOME}/bin."
 echo "${HOME}/bin will be created if it doesn't exist."
-echo "This script will append the PATH variable in ${HOME}/.profile if it exists."
+#echo "This script will append the PATH variable in ${HOME}/.profile if it exists."
 
 if [ "`which curl`" == "" ]; then
     echo "The curl command line tool is required to run this script."
     echo -e "curl command not found, please install and rerun.\n"
     echo "Host is running $OS"
     case $OS in
-        Ubuntu) echo -e "install curl using=> sudo apt -y install curl";;
-        Fedora) echo -e "install curl using=> sudo dnf -y install curl";;
+        ubuntu) echo -e "install curl using=> sudo apt -y install curl";;
+        fedora) echo -e "install curl using=> sudo dnf -y install curl";;
     esac
     exit 0;
 fi
 
-[ ! -d ${HOME}]/bin ] && mkdir ${HOME}/bin
+[ ! -d ${HOME}]/bin ] && mkdir -p ${HOME}/bin
 
-echo "Grabbing file URL from https://www.vagrantup.com/downloads"
-URL=`curl -s https://www.vagrantup.com/downloads | egrep -o 'https?://[^ ")]+' | grep zip`
+function get_vagrant_version {
+    echo `curl -s https://www.vagrantup.com/downloads | perl -lne 'print $1 if /vagrant-([1-9][0-9]*\.\d{1,2}\.\d{1,2})-\(latest\)/'`
+}
+
+green
+VER=$(get_vagrant_version)
+echo "The latest Vargrant is version: $VER"
+
+URL="https://releases.hashicorp.com/vagrant/$VER/vagrant_${VER}_linux_amd64.zip"
 echo -e "Downloading $URL\n"
+
 cd ${HOME}/bin && curl $URL | zcat > vagrant && chmod +x vagrant
-source ${HOME}/.profile
-EXE=`vagrant --version`
-if [ ! "$EXE" = "" ]; then
-    echo "$EXE is now installed"
+#source ${HOME}/.profile
+
+VAGRANT_PATH=`which vagrant`
+INSTALLED_VER=`vagrant --version | cut -d' ' -f2`
+
+if [ $INSTALLED_VER == $VER ]; then
+    magenta
+    echo "Vagrant $INSTALLED_VER is now installed in $VAGRANT_PATH"
+    color_off
     exit 0
 fi
 
