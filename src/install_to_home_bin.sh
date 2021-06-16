@@ -1,9 +1,16 @@
 #!/bin/env bash
 BASE_URI="https://raw.githubusercontent.com/greergan/bin/main/src"
 
-wget_exists () {
+if_wget_exists () {
     status=`which wget`
     return $?
+}
+
+download_lib () {
+    for library in colors os_information
+    do
+        wget -q $BASE_URI/lib/$library.bash -O ${HOME}/bin/lib/$library.bash
+    done
 }
 
 download_script () {
@@ -14,15 +21,13 @@ download_script () {
     done
 }
 
-# brute force silent creation
-mkdir -p ${HOME}/bin
-wget_exists
-
+if_wget_exists
 if [ $? = 0 ]; then
+    mkdir -p ${HOME}/bin/lib
+    download_lib
     download_script
 else
-    sudo apt-get -q install wget -y
-    download_script
+    #sudo apt-get -q install wget -y
+    #download_script
+    echo "The program wget is not installed"
 fi
-
-echo "Remember to 'source ~/.profile' to use your scripts immediately, otherwise logout and log back in."
