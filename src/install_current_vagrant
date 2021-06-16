@@ -3,9 +3,8 @@ source ~/bin/lib/os_information.bash
 source ~/bin/lib/colors.bash
 OS=`get_os_name`
 
+clear_color
 magenta
-echo -e '\033[2J\033[u'
-echo -e '\033[38;2;200;100;2552m'
 echo "Installing Vagrant for Linux from zip file."
 echo "This script will install into ${HOME}/bin."
 echo "${HOME}/bin will be created if it doesn't exist."

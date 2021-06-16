@@ -1,3 +1,7 @@
+function clear_color {
+    echo -e '\033[2J\033[u'
+}
+
 function magenta {
     echo -e '\033[38;2;200;100;2552m'
 }
