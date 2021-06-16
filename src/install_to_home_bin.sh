@@ -29,5 +29,5 @@ if [ $? = 0 ]; then
 else
     #sudo apt-get -q install wget -y
     #download_script
-    echo "The program wget is not installed"
+    echo "The program"
 fi
