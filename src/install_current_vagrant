@@ -3,7 +3,7 @@ source ~/bin/lib/os_information.bash
 source ~/bin/lib/colors.bash
 OS=`get_os_name`
 
-clear_color
+clear_term
 magenta
 echo "Installing Vagrant for Linux from zip file."
 echo "This script will install into ${HOME}/bin."
