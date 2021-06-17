@@ -1,4 +1,9 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
+
+# READ the script so you know what it does.
+# main instructions at the bottom after the
+# function definitions
+
 source ${HOME}/bin/lib/os_information.bash
 source ${HOME}/bin/lib/colors.bash
 
