@@ -1,0 +1,137 @@
+#!/usr/bin/env sh
+source ${HOME}/bin/lib/os_information.bash
+source ${HOME}/bin/lib/colors.bash
+
+apt_dir=/etc/apt
+apt_key_dir=$apt_dir/trusted.gpg.d
+apt_sources_dir=$apt_dir/sources.list.d
+
+nginx_apt_key_file=$apt_key_dir/nginx-ubuntu-archive.gpg
+nginx_apt_sources_file=$apt_sources_dir/nginx-unit.list
+
+unit_socket_name=/var/run/control.unit.sock
+my_local_config_dir=~/etc
+my_local_init_file=$my_local_config_dir/unit_init
+my_local_config_file=$my_local_config_dir/unit_config.json
+my_local_html_dir=~/html
+my_index_html_file=$my_local_html_dir/index.html
+my_local_ip=127.0.0.1
+my_local_port=8000
+
+function add_key {
+	if [ ! -f $my_local_init_file ]; then
+		sudo curl -sL https://nginx.org/keys/nginx_signing.key -o $nginx_apt_key_file
+	else
+		(exit 0)
+	fi
+}
+
+function apt_update_and_install {
+	if [ ! -f $my_local_init_file ]; then
+		sudo apt update
+		sudo apt install unit
+	else
+		(exit 0)
+	fi
+}
+
+function local_setup {
+	if [ ! -d $my_local_config_dir ]; then
+		magenta
+		echo creating "your person config directory $my_local_config_dir"
+		mkdir -p $my_local_config_dir
+	fi
+	if [ ! -d $my_local_html_dir ]; then
+		magenta
+		echo "creating your personal html directory $my_local_html_dir"
+		mkdir -p $my_local_html_dir
+		chmod a+rx $my_local_html_dir
+	fi
+}
+
+function create_index_html_file {
+	if [ ! -f $my_index_html_file ]; then
+		magenta
+		echo "creating initial html file $my_index_html_file"
+		tee -a $my_index_html_file > /dev/null << EOF
+<html>
+	<body>
+		hello world!
+	</body>
+</html>
+EOF
+	fi
+}
+
+function load_unit_configuration {
+	if [ ! -f $my_local_init_file ]; then
+		magenta
+		echo "loading unit configuration using $my_local_init_file"
+		sudo curl -X PUT --data-binary @$my_local_config_file --unix-socket $unit_socket_name http://localhost/config/
+		touch $my_local_init_file
+	fi
+}
+
+function test_configuration {
+	green
+	echo "using curl to view installed $my_index_html_file"
+	echo "curl http://localhost:$my_local_port"
+	curl http://localhost:$my_local_port
+}
+
+function create_unit_config_file {
+	if [ ! -f $my_local_config_file ]; then
+		echo "creating first configuration file $my_local_config_file"
+		tee -a $my_local_config_file > /dev/null << EOF
+{
+    "listeners": {
+        "$my_local_ip:$my_local_port": {
+            "pass": "routes"
+        }
+     },
+
+    "routes": [
+        {
+            "action": {
+                "share": "$my_local_html_dir"
+            }
+        }
+    ]
+}
+EOF
+		cat $my_local_config_file
+		echo "created configuration file $my_local_config_file"
+	fi
+}
+
+function configure_nginx_apt_sources_file {
+	if [ ! -f $my_local_init_file ]; then
+		sudo rm -f $nginx_apt_sources_file
+		sudo tee -a $nginx_apt_sources_file > /dev/null <<EOT
+deb https://packages.nginx.org/unit/ubuntu/ $(get_os_release_codename) unit
+deb-src https://packages.nginx.org/unit/ubuntu/ $(get_os_release_codename) unit
+EOT
+	fi
+}
+
+clear_term
+green
+case `get_os_release_name` in
+	ubuntu)
+		add_key
+		[[ $? != 0 ]] && echo "Adding initial key failed" && exit
+		case `get_os_release_number` in
+			21.04|20.10|20.04|18.04)
+				configure_nginx_apt_sources_file
+				[[ $? != 0 ]] && echo "Creating repository list file failed for $nginx_apt_sources_file" && exit
+				apt_update_and_install
+				local_setup
+				create_unit_config_file
+				create_index_html_file
+				load_unit_configuration
+				green
+				test_configuration
+		;;
+		esac
+	;;
+esac

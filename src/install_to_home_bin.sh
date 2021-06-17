@@ -14,7 +14,7 @@ download_lib () {
 }
 
 download_script () {
-    for script in open_sudo close_sudo install_current_vagrant gitclean
+    for script in open_sudo close_sudo install_current_vagrant gitclean install_nginx_unit
     do
         wget -q $BASE_URI/$script -O ${HOME}/bin/$script
         chmod u+x ${HOME}/bin/$script
