@@ -1,9 +1,11 @@
+# https://en.wikipedia.org/wiki/ANSI_escape_code#3-bit_and_4-bit
+
 function clear_term {
     echo -e '\e[3J'
 }
 
 function magenta {
-    echo -e '\e[38;31;35m'
+    echo -e '\e[35m'
 }
 function green {
     echo -e '\e[38;2;0;255;02m'
